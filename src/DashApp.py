@@ -26,54 +26,58 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 server = app.server
 
 # --- LAYOUT (HTML Structure) ---
-app.layout = dbc.Container([
-    dbc.Row(dbc.Col(html.H1("Customer Segmentation Engine", className="text-center my-4 fw-bold"))),
-    
-    dbc.Row([
-        # LEFT COLUMN: User Inputs
-        dbc.Col([
-            dbc.Card([
-                dbc.CardHeader(html.H4("New Customer Data", className="mb-0")),
-                dbc.CardBody([
-                    dbc.Label("Age"),
-                    dbc.Input(id="age-in", type="number", value=30),
-                    
-                    dbc.Label("Family Size", className="mt-2"),
-                    dbc.Input(id="family-in", type="number", value=2),
-                    
-                    dbc.Label("Work Experience (Years)", className="mt-2"),
-                    dbc.Input(id="work-in", type="number", value=5),
-                    
-                    dbc.Label("Gender", className="mt-2"),
-                    dcc.Dropdown(id="gender-in", options=[{'label': 'Male', 'value': 1}, {'label': 'Female', 'value': 0}], value=0),
-                    
-                    dbc.Label("Ever Married?", className="mt-2"),
-                    dcc.Dropdown(id="married-in", options=[{'label': 'Yes', 'value': 1}, {'label': 'No', 'value': 0}], value=0),
-                    
-                    dbc.Label("Graduated?", className="mt-2"),
-                    dcc.Dropdown(id="graduated-in", options=[{'label': 'Yes', 'value': 1}, {'label': 'No', 'value': 0}], value=1),
-                    
-                    dbc.Label("Spending Score", className="mt-2"),
-                    dcc.Dropdown(id="spending-in", options=[{'label': 'Low', 'value': 0}, {'label': 'Average', 'value': 1}, {'label': 'High', 'value': 2}], value=1),
-                    
-                    dbc.Label("Profession", className="mt-2"),
-                    dcc.Dropdown(id="profession-in", options=[{'label': p, 'value': p} for p in ['Artist', 'Doctor', 'Engineer', 'Entertainment', 'Executive', 'Healthcare', 'Homemaker', 'Lawyer', 'Marketing']], value='Artist'),
-                    
-                    # Note the custom CSS class 'predict-btn' here
-                    dbc.Button("GENERATE SEGMENT", id="predict-btn", color="primary", className="w-100 mt-4 predict-btn")
-                ])
-            ], className="custom-card") # Note the custom CSS class here
-        ], md=4),
+app.layout = html.Div([
+    dbc.Container([
+        dbc.Row(dbc.Col(html.H2("Customer Segmentation Engine", className="text-center mt-4 mb-3 fw-bold text-dark"))),
         
-        # RIGHT COLUMN: Graph and Results
-        dbc.Col([
-            html.Div(id="result-display", className="mb-4"),
-            dbc.Card([
-                dbc.CardBody(dcc.Graph(id="cluster-graph"))
-            ], className="custom-card shadow-sm")
-        ], md=8)
-    ])
-], fluid=True, className="p-4")
+        dbc.Row([
+            # LEFT COLUMN: User Inputs (Tighter fitting)
+            dbc.Col([
+                dbc.Card([
+                    dbc.CardHeader(html.H5("New Customer Data", className="mb-0 text-dark fw-bold"), className="bg-transparent border-0 pt-3 pb-0"),
+                    
+                    # Compressed CardBody padding (px-3 py-2)
+                    dbc.CardBody([
+                        dbc.Label("Age", className="fw-bold text-dark mb-0", style={"fontSize": "0.9rem"}),
+                        dbc.Input(id="age-in", type="number", value=30, size="sm", className="mb-2"),
+                        
+                        dbc.Label("Family Size", className="fw-bold text-dark mb-0", style={"fontSize": "0.9rem"}),
+                        dbc.Input(id="family-in", type="number", value=2, size="sm", className="mb-2"),
+                        
+                        dbc.Label("Work Experience (Years)", className="fw-bold text-dark mb-0", style={"fontSize": "0.9rem"}),
+                        dbc.Input(id="work-in", type="number", value=5, size="sm", className="mb-2"),
+                        
+                        dbc.Label("Gender", className="fw-bold text-dark mb-0", style={"fontSize": "0.9rem"}),
+                        dcc.Dropdown(id="gender-in", options=[{'label': 'Male', 'value': 1}, {'label': 'Female', 'value': 0}], value=0, className="mb-2"),
+                        
+                        dbc.Label("Ever Married?", className="fw-bold text-dark mb-0", style={"fontSize": "0.9rem"}),
+                        dcc.Dropdown(id="married-in", options=[{'label': 'Yes', 'value': 1}, {'label': 'No', 'value': 0}], value=0, className="mb-2"),
+                        
+                        dbc.Label("Graduated?", className="fw-bold text-dark mb-0", style={"fontSize": "0.9rem"}),
+                        dcc.Dropdown(id="graduated-in", options=[{'label': 'Yes', 'value': 1}, {'label': 'No', 'value': 0}], value=1, className="mb-2"),
+                        
+                        dbc.Label("Spending Score", className="fw-bold text-dark mb-0", style={"fontSize": "0.9rem"}),
+                        dcc.Dropdown(id="spending-in", options=[{'label': 'Low', 'value': 0}, {'label': 'Average', 'value': 1}, {'label': 'High', 'value': 2}], value=1, className="mb-2"),
+                        
+                        dbc.Label("Profession", className="fw-bold text-dark mb-0", style={"fontSize": "0.9rem"}),
+                        dcc.Dropdown(id="profession-in", options=[{'label': p, 'value': p} for p in ['Artist', 'Doctor', 'Engineer', 'Entertainment', 'Executive', 'Healthcare', 'Homemaker', 'Lawyer', 'Marketing']], value='Artist', className="mb-3"),
+                        
+                        dbc.Button("GENERATE SEGMENT", id="predict-btn", color="dark", className="w-100 predict-btn py-2")
+                    ], className="px-3 py-2") 
+                ], className="glass-card mb-4")
+            ], md=4, lg=3), # lg=3 makes the column slightly thinner on big screens so it looks sleeker
+            
+            # RIGHT COLUMN: Graph and Results
+            dbc.Col([
+                html.Div(id="result-display"),
+                dbc.Card([
+                    # Use vh (viewport height) so it dynamically fits the screen, with a safe minimum
+                    dbc.CardBody(dcc.Graph(id="cluster-graph", style={"height": "65vh", "minHeight": "450px"}))
+                ], className="glass-card mb-4")
+            ], md=8, lg=9)
+        ])
+    ], fluid=True, className="px-4") 
+])
 
 # --- ML INFERENCE LOGIC ---
 @app.callback(
@@ -86,7 +90,12 @@ app.layout = dbc.Container([
 def segment_customer(n_clicks, age, work, family, gender, married, grad, spending, profession):
     # Base Plot (Historical Data)
     fig = px.scatter(df, x="PC1", y="PC2", color="Persona", opacity=0.4, title="Customer Segments (PCA Projection)")
-    fig.update_layout(plot_bgcolor='white', transition_duration=500)
+    fig.update_layout(
+            paper_bgcolor='#ffffff', 
+            plot_bgcolor='#ffffff',
+            transition_duration=500,
+            margin=dict(t=40, l=20, r=20, b=40)
+        )
     
     if not n_clicks:
         return html.Div(), fig
@@ -123,7 +132,12 @@ def segment_customer(n_clicks, age, work, family, gender, married, grad, spendin
                          color_discrete_map={persona_name: "#e74c3c", "Other": "#bdc3c7"},
                          opacity=0.8, title=f"Prediction: {persona_name}")
         fig.update_traces(marker=dict(size=8, line=dict(width=1, color='white')))
-        fig.update_layout(plot_bgcolor='white')
+        fig.update_layout(
+            paper_bgcolor='#ffffff', 
+            plot_bgcolor='#ffffff',
+            transition_duration=500,
+            margin=dict(t=40, l=20, r=20, b=40)
+        )
         
         # 5. Build the UI result badge
         result_ui = dbc.Alert([
