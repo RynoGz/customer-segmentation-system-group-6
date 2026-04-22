@@ -31,12 +31,12 @@ app.layout = html.Div([
         dbc.Row(dbc.Col(html.H2("Customer Segmentation Engine", className="text-center mt-4 mb-3 fw-bold text-dark"))),
         
         dbc.Row([
-            # LEFT COLUMN: User Inputs (Tighter fitting)
+            # LEFT COLUMN
             dbc.Col([
                 dbc.Card([
                     dbc.CardHeader(html.H5("New Customer Data", className="mb-0 text-dark fw-bold"), className="bg-transparent border-0 pt-3 pb-0"),
                     
-                    # Compressed CardBody padding (px-3 py-2)
+                   
                     dbc.CardBody([
                         dbc.Label("Age", className="fw-bold text-dark mb-0", style={"fontSize": "0.9rem"}),
                         dbc.Input(id="age-in", type="number", value=30, size="sm", className="mb-2"),
@@ -65,13 +65,12 @@ app.layout = html.Div([
                         dbc.Button("GENERATE SEGMENT", id="predict-btn", color="dark", className="w-100 predict-btn py-2")
                     ], className="px-3 py-2") 
                 ], className="glass-card mb-4")
-            ], md=4, lg=3), # lg=3 makes the column slightly thinner on big screens so it looks sleeker
+            ], md=4, lg=3),
             
-            # RIGHT COLUMN: Graph and Results
+            # RIGHT COLUMN
             dbc.Col([
                 html.Div(id="result-display"),
                 dbc.Card([
-                    # Use vh (viewport height) so it dynamically fits the screen, with a safe minimum
                     dbc.CardBody(dcc.Graph(id="cluster-graph", style={"height": "65vh", "minHeight": "450px"}))
                 ], className="glass-card mb-4")
             ], md=8, lg=9)
@@ -101,7 +100,7 @@ def segment_customer(n_clicks, age, work, family, gender, married, grad, spendin
         return html.Div(), fig
         
     try:
-        # 1. Build the exact 16-feature dictionary the Scaler expects
+        # Builds the exact 16-feature dictionary the Scaler expects
         input_data = {
             'Age': age, 'Work_Experience': work, 'Family_Size': family,
             'Gender_encoded': gender, 'Ever_Married_encoded': married,
@@ -112,19 +111,19 @@ def segment_customer(n_clicks, age, work, family, gender, married, grad, spendin
             'Profession_Lawyer': 0, 'Profession_Marketing': 0
         }
         
-        # 2. Inject the One-Hot Encoding for the chosen profession
+        # Inject the One-Hot Encoding for the chosen profession
         prof_key = f"Profession_{profession}"
         if prof_key in input_data:
             input_data[prof_key] = 1
             
         input_df = pd.DataFrame([input_data])
         
-        # 3. Scale and Predict
+        # Scale and Predict
         scaled_input = scaler.transform(input_df)
         cluster_idx = model.predict(scaled_input)[0]
         persona_name = persona_map.get(cluster_idx, f"Cluster {cluster_idx}")
         
-        # 4. Highlight the predicted cluster on the graph
+        # Highlight the predicted cluster on the graph
         df['Highlight'] = df['Cluster'].apply(lambda x: persona_name if x == cluster_idx else "Other")
         
         # Update figure to emphasize the selected cluster
@@ -139,7 +138,7 @@ def segment_customer(n_clicks, age, work, family, gender, married, grad, spendin
             margin=dict(t=40, l=20, r=20, b=40)
         )
         
-        # 5. Build the UI result badge
+        # Build the UI result badge
         result_ui = dbc.Alert([
             html.H4("Analysis Complete", className="alert-heading"),
             html.Hr(),
