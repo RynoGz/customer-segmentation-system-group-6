@@ -68,6 +68,8 @@ A suitable dataset containing customer demographic and/or behavioural data will 
 
 * Deployment of the application using Hugging Face
 
+* Website: https://huggingface.co/spaces/Alb05/customer-segmentation-group-6
+
 ---
 
 ## 📁 Project Structure
