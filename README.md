@@ -66,7 +66,7 @@ A suitable dataset containing customer demographic and/or behavioural data will 
 
 ### 7. Deployment
 
-* Deployment of the application using a platform such as Render
+* Deployment of the application using Hugging Face
 
 ---
 
