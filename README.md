@@ -72,24 +72,6 @@ A suitable dataset containing customer demographic and/or behavioural data will 
 
 ---
 
-## 📁 Project Structure
-
-```
-customer-segmentation-system/
-│
-├── data/
-│
-├── notebooks/
-│   
-├── src/    
-├── app/  
-│
-├── README.md
-└── .gitignore
-```
-
----
-
 ## ⚙️ Technologies Used
 
 * Python
